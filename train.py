@@ -4,6 +4,7 @@ import torch.optim as optim
 
 from torchvision import datasets
 from torchvision import transforms
+
 from torch.utils.data import DataLoader
 
 from model import EmotionCNN
@@ -11,36 +12,65 @@ from model import EmotionCNN
 
 # Configuration
 
-BATCH_SIZE = 16
-EPOCHS = 3
-LEARNING_RATE = 0.001
+BATCH_SIZE = 32
+
+EPOCHS = 20
+
+LEARNING_RATE = 0.0005
 
 TRAIN_DIR = "dataset/images/train"
+
 VAL_DIR = "dataset/images/validation"
 
 
-# Transforms
+# Data Augmentation
 
-transform = transforms.Compose([
+train_transform = transforms.Compose([
+
     transforms.Resize((96, 96)),
+
+    transforms.RandomHorizontalFlip(),
+
+    transforms.RandomRotation(10),
+
+    transforms.ColorJitter(
+        brightness=0.2,
+        contrast=0.2
+    ),
+
+    transforms.ToTensor()
+])
+
+
+val_transform = transforms.Compose([
+
+    transforms.Resize((96, 96)),
+
     transforms.ToTensor()
 ])
 
 
 print("Loading datasets...")
 
+
 train_dataset = datasets.ImageFolder(
     TRAIN_DIR,
-    transform=transform
+    transform=train_transform
 )
 
 val_dataset = datasets.ImageFolder(
     VAL_DIR,
-    transform=transform
+    transform=val_transform
 )
 
-print(f"Training Images: {len(train_dataset)}")
-print(f"Validation Images: {len(val_dataset)}")
+
+print(
+    f"Training Images: {len(train_dataset)}"
+)
+
+print(
+    f"Validation Images: {len(val_dataset)}"
+)
 
 
 train_loader = DataLoader(
@@ -62,6 +92,7 @@ device = torch.device("cpu")
 
 print(f"Using device: {device}")
 
+
 model = EmotionCNN().to(device)
 
 criterion = nn.CrossEntropyLoss()
@@ -70,6 +101,10 @@ optimizer = optim.Adam(
     model.parameters(),
     lr=LEARNING_RATE
 )
+
+
+best_accuracy = 0
+
 
 print("Starting training...")
 
@@ -83,13 +118,17 @@ for epoch in range(EPOCHS):
     for batch_idx, (images, labels) in enumerate(train_loader):
 
         images = images.to(device)
+
         labels = labels.to(device)
 
         optimizer.zero_grad()
 
         outputs = model(images)
 
-        loss = criterion(outputs, labels)
+        loss = criterion(
+            outputs,
+            labels
+        )
 
         loss.backward()
 
@@ -105,16 +144,21 @@ for epoch in range(EPOCHS):
                 f"Loss: {loss.item():.4f}"
             )
 
-    avg_loss = running_loss / len(train_loader)
+    avg_loss = (
+        running_loss /
+        len(train_loader)
+    )
 
     print(
-        f"\nEpoch {epoch + 1} Training Loss: "
+        f"\nEpoch {epoch + 1} "
+        f"Training Loss: "
         f"{avg_loss:.4f}"
     )
 
     model.eval()
 
     correct = 0
+
     total = 0
 
     with torch.no_grad():
@@ -122,6 +166,7 @@ for epoch in range(EPOCHS):
         for images, labels in val_loader:
 
             images = images.to(device)
+
             labels = labels.to(device)
 
             outputs = model(images)
@@ -146,11 +191,24 @@ for epoch in range(EPOCHS):
         f"{accuracy:.2f}%\n"
     )
 
+    if accuracy > best_accuracy:
 
-torch.save(
-    model.state_dict(),
-    "models/emotion_cnn.pth"
+        best_accuracy = accuracy
+
+        torch.save(
+            model.state_dict(),
+            "models/emotion_cnn.pth"
+        )
+
+        print(
+            f"New Best Model Saved "
+            f"({accuracy:.2f}%)"
+        )
+
+
+print("\nTraining Complete")
+
+print(
+    f"Best Validation Accuracy: "
+    f"{best_accuracy:.2f}%"
 )
-
-print("Training Complete")
-print("Model saved to models/emotion_cnn.pth")
