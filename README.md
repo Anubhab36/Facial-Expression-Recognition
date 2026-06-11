@@ -1,28 +1,28 @@
-# Facial Expression Recognition Using Convolutional Neural Networks (CNN)
+# Facial Expression Recognition using Custom CNN
 
 ## Overview
 
-This project implements a Facial Expression Recognition System using Deep Learning and Computer Vision techniques. The system is capable of classifying human facial expressions into seven different emotion categories by analyzing facial images.
+This project implements a Facial Expression Recognition system using a Convolutional Neural Network (CNN) built and trained from scratch with PyTorch. The model classifies facial images into seven different emotion categories and demonstrates the complete deep learning workflow, including data preprocessing, model design, training, evaluation, and inference.
 
-A custom Convolutional Neural Network (CNN) was designed and trained from scratch using PyTorch on a facial expression dataset containing thousands of labeled images. The trained model can predict emotions from previously unseen facial images.
+The primary objective of this project was to understand the fundamentals of deep learning by building a CNN architecture manually rather than relying on pre-trained models or transfer learning techniques.
 
 ---
 
 ## Features
 
 * Custom CNN architecture built from scratch
-* Emotion classification into seven categories
-* Training and validation pipeline using PyTorch
-* Image preprocessing and augmentation support
-* Model evaluation using validation accuracy
-* Trained model export and reuse
-* Emotion prediction from new facial images
+* Facial emotion classification into 7 categories
+* Data preprocessing and augmentation
+* Model training and evaluation using PyTorch
+* Image-based emotion prediction
+* Training and validation performance analysis
+* Overfitting analysis through training and validation metrics
 
 ---
 
 ## Emotion Classes
 
-The model classifies images into the following emotions:
+The model classifies images into the following categories:
 
 * Angry
 * Disgust
@@ -40,104 +40,31 @@ The model classifies images into the following emotions:
 
 * Python
 
-### Machine Learning Framework
+### Libraries & Frameworks
 
 * PyTorch
-* TorchVision
-
-### Image Processing
-
+* Torchvision
 * Pillow (PIL)
+* NumPy
 
 ### Development Environment
 
-* Visual Studio Code
-* Linux
+* VS Code
+* Linux (ChromeOS Container)
 
 ---
 
 ## Dataset
 
-The project uses a Facial Expression Recognition dataset containing facial images categorized into seven emotions.
+The project uses a facial expression dataset containing images categorized into seven emotion classes.
 
-Dataset Structure:
+### Dataset Statistics
 
-```text
-dataset/
-└── images/
-    ├── train/
-    │   ├── angry/
-    │   ├── disgust/
-    │   ├── fear/
-    │   ├── happy/
-    │   ├── neutral/
-    │   ├── sad/
-    │   └── surprise/
-    │
-    └── validation/
-        ├── angry/
-        ├── disgust/
-        ├── fear/
-        ├── happy/
-        ├── neutral/
-        ├── sad/
-        └── surprise/
-```
-
-Dataset Statistics:
-
-* Training Images: 28,821
-* Validation Images: 7,066
-* Total Images: 35,887
-
----
-
-## CNN Architecture
-
-The custom CNN consists of:
-
-```text
-Input Image (96 × 96 × 3)
-        │
-        ▼
-Conv2D (32 Filters)
-        │
-        ▼
-ReLU Activation
-        │
-        ▼
-Max Pooling
-        │
-        ▼
-Conv2D (64 Filters)
-        │
-        ▼
-ReLU Activation
-        │
-        ▼
-Max Pooling
-        │
-        ▼
-Conv2D (128 Filters)
-        │
-        ▼
-ReLU Activation
-        │
-        ▼
-Max Pooling
-        │
-        ▼
-Flatten
-        │
-        ▼
-Fully Connected Layer
-        │
-        ▼
-Dropout
-        │
-        ▼
-Output Layer (7 Classes)
-```
+| Dataset        | Images |
+| -------------- | ------ |
+| Training Set   | 28,821 |
+| Validation Set | 7,066  |
+| Total          | 35,887 |
 
 ---
 
@@ -147,6 +74,9 @@ Output Layer (7 Classes)
 facial-expression-recognition/
 │
 ├── dataset/
+│   └── images/
+│       ├── train/
+│       └── validation/
 │
 ├── models/
 │   └── emotion_cnn.pth
@@ -154,7 +84,6 @@ facial-expression-recognition/
 ├── model.py
 ├── train.py
 ├── predict.py
-│
 ├── requirements.txt
 ├── README.md
 │
@@ -163,35 +92,118 @@ facial-expression-recognition/
 
 ---
 
-## Installation
+## CNN Architecture
 
-### Clone the Repository
+The model consists of:
 
-```bash
-git clone https://github.com/Anubhab36/Facial-Expression-Recognition
+### Feature Extraction Layers
 
-cd facial-expression-recognition
-```
+* Conv2D (3 → 32)
 
-### Create Virtual Environment
+* Batch Normalization
 
-```bash
-python -m venv venv
-```
+* ReLU Activation
 
-### Activate Virtual Environment
+* Max Pooling
 
-Linux:
+* Conv2D (32 → 64)
 
-```bash
-source venv/bin/activate
-```
+* Batch Normalization
 
-Windows:
+* ReLU Activation
 
-```bash
-venv\Scripts\activate
-```
+* Max Pooling
+
+* Conv2D (64 → 128)
+
+* Batch Normalization
+
+* ReLU Activation
+
+* Max Pooling
+
+* Conv2D (128 → 256)
+
+* Batch Normalization
+
+* ReLU Activation
+
+* Max Pooling
+
+### Classification Layers
+
+* Fully Connected Layer (4096 → 512)
+
+* ReLU Activation
+
+* Dropout
+
+* Fully Connected Layer (512 → 256)
+
+* ReLU Activation
+
+* Dropout
+
+* Output Layer (256 → 7)
+
+---
+
+## Training Configuration
+
+| Parameter     | Value            |
+| ------------- | ---------------- |
+| Image Size    | 64 × 64          |
+| Batch Size    | 64               |
+| Learning Rate | 0.0005           |
+| Optimizer     | Adam             |
+| Loss Function | CrossEntropyLoss |
+| Epochs        | 20               |
+
+---
+
+## Data Augmentation
+
+To improve generalization, the following transformations were applied:
+
+* Resize (64 × 64)
+* Random Horizontal Flip
+* Random Rotation (10°)
+* Tensor Conversion
+
+---
+
+## Results
+
+### Experiment 1
+
+Custom CNN with Batch Normalization and Data Augmentation.
+
+| Metric                   | Value  |
+| ------------------------ | ------ |
+| Best Validation Accuracy | 61.66% |
+
+### Experiment 2
+
+Extended training and optimization to analyze model learning behavior.
+
+| Metric                    | Value  |
+| ------------------------- | ------ |
+| Training Accuracy         | 95.58% |
+| Best Validation Accuracy  | 60.76% |
+| Final Validation Accuracy | 59.93% |
+| Training Loss             | 0.1264 |
+
+---
+
+## Performance Analysis
+
+The model achieved a training accuracy of 95.58%, demonstrating its ability to learn and fit the training dataset effectively.
+
+However, validation accuracy remained around 60%, indicating overfitting. This experiment highlights the difference between memorization and generalization in deep learning systems and demonstrates the importance of model regularization and performance evaluation on unseen data.
+
+---
+
+## Running the Project
 
 ### Install Dependencies
 
@@ -199,62 +211,22 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
-
-## Training the Model
-
-To train the CNN model:
+### Train the Model
 
 ```bash
 python train.py
 ```
 
-The training process:
-
-1. Loads the dataset
-2. Preprocesses images
-3. Trains the CNN
-4. Evaluates on validation data
-5. Saves the trained model
-
-The trained model is saved as:
-
-```text
-models/emotion_cnn.pth
-```
-
----
-
-## Model Performance
-
-Training Results:
-
-| Epoch | Training Loss | Validation Accuracy |
-| ----- | ------------- | ------------------- |
-| 1     | 1.6736        | 41.15%              |
-| 2     | 1.4679        | 46.53%              |
-| 3     | 1.3487        | 49.87%              |
-
-Final Validation Accuracy:
-
-```text
-49.87%
-```
-
----
-
-## Running Predictions
-
-To predict emotion from a facial image:
+### Predict Emotion for an Image
 
 ```bash
-python predict.py image.jpg
+python predict.py path/to/image.jpg
 ```
 
 Example:
 
 ```bash
-python predict.py sample.jpg
+python predict.py dataset/images/validation/happy/10019.jpg
 ```
 
 Output:
@@ -265,65 +237,37 @@ Predicted Emotion: happy
 
 ---
 
-## Sample Workflow
-
-```text
-Input Face Image
-        │
-        ▼
-Image Preprocessing
-        │
-        ▼
-CNN Model
-        │
-        ▼
-Emotion Classification
-        │
-        ▼
-Predicted Emotion
-```
-
----
-
 ## Learning Outcomes
 
-Through this project, the following concepts were implemented and explored:
+Through this project, the following concepts were explored:
 
-* Deep Learning Fundamentals
 * Convolutional Neural Networks (CNNs)
 * Image Classification
-* Computer Vision
-* Model Training and Validation
+* Data Augmentation
+* Batch Normalization
+* Model Training and Evaluation
 * Hyperparameter Tuning
-* PyTorch Framework
-* Dataset Handling using DataLoader
-* Model Deployment for Inference
+* Overfitting Analysis
+* Deep Learning using PyTorch
 
 ---
 
 ## Future Improvements
 
-Possible enhancements include:
+Potential enhancements include:
 
-* Real-time webcam emotion detection
-* Transfer learning using ResNet or EfficientNet
-* Accuracy optimization through data augmentation
-* Confusion matrix visualization
-* Training and validation loss graphs
-* Web application deployment using Streamlit
+* Early Stopping
+* Learning Rate Scheduling
+* Confusion Matrix Analysis
+* Real-Time Webcam Emotion Detection
+* Attention-Based CNN Architectures
+* Transfer Learning using ResNet or EfficientNet
+* Deployment using Flask or Streamlit
 
 ---
 
 ## Author
 
-Anubhab Chakraborty
+**Anubhab Chakraborty**
 
-Bachelor of Technology (B.Tech)
-
-Artificial Intelligence & Machine Learning
-
----
-
-## License
-
-This project is developed for educational and learning purposes.
+Built as a deep learning project to explore facial expression recognition and CNN-based image classification using PyTorch.
