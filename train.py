@@ -10,9 +10,7 @@ from torch.utils.data import DataLoader
 from model import EmotionCNN
 
 
-# Configuration
-
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 
 EPOCHS = 20
 
@@ -23,28 +21,16 @@ TRAIN_DIR = "dataset/images/train"
 VAL_DIR = "dataset/images/validation"
 
 
-# Data Augmentation
-
 train_transform = transforms.Compose([
 
-    transforms.Resize((96, 96)),
-
-    transforms.RandomHorizontalFlip(),
-
-    transforms.RandomRotation(10),
-
-    transforms.ColorJitter(
-        brightness=0.2,
-        contrast=0.2
-    ),
-
+    transforms.Resize((64, 64)),
     transforms.ToTensor()
 ])
 
 
 val_transform = transforms.Compose([
 
-    transforms.Resize((96, 96)),
+    transforms.Resize((64, 64)),
 
     transforms.ToTensor()
 ])
@@ -115,6 +101,10 @@ for epoch in range(EPOCHS):
 
     running_loss = 0.0
 
+    train_correct = 0
+
+    train_total = 0
+
     for batch_idx, (images, labels) in enumerate(train_loader):
 
         images = images.to(device)
@@ -124,6 +114,17 @@ for epoch in range(EPOCHS):
         optimizer.zero_grad()
 
         outputs = model(images)
+
+        _, predicted = torch.max(
+            outputs.data,
+            1
+        )
+
+        train_total += labels.size(0)
+
+        train_correct += (
+            predicted == labels
+        ).sum().item()
 
         loss = criterion(
             outputs,
@@ -136,7 +137,7 @@ for epoch in range(EPOCHS):
 
         running_loss += loss.item()
 
-        if batch_idx % 100 == 0:
+        if batch_idx % 50 == 0:
 
             print(
                 f"Epoch {epoch + 1}/{EPOCHS} | "
@@ -149,10 +150,19 @@ for epoch in range(EPOCHS):
         len(train_loader)
     )
 
+    train_accuracy = (
+        100 * train_correct / train_total
+    )
+
     print(
         f"\nEpoch {epoch + 1} "
         f"Training Loss: "
         f"{avg_loss:.4f}"
+    )
+
+    print(
+        f"Training Accuracy: "
+        f"{train_accuracy:.2f}%"
     )
 
     model.eval()

@@ -1,28 +1,123 @@
-# Facial Expression Recognition using Custom CNN
+# Facial Expression Recognition using Deep Learning (PyTorch)
 
 ## Overview
 
-This project implements a Facial Expression Recognition system using a Convolutional Neural Network (CNN) built and trained from scratch with PyTorch. The model classifies facial images into seven different emotion categories and demonstrates the complete deep learning workflow, including data preprocessing, model design, training, evaluation, and inference.
+This project presents a complete deep learning pipeline for **Facial Expression Recognition** using Convolutional Neural Networks (CNNs) implemented from scratch with **PyTorch**.
 
-The primary objective of this project was to understand the fundamentals of deep learning by building a CNN architecture manually rather than relying on pre-trained models or transfer learning techniques.
+The repository contains two independent facial expression recognition models:
 
----
+* **General Emotion Recognition Model** trained on the FER2013 dataset to classify seven facial emotions.
+* **Pain Expression Recognition Model** trained on a custom dataset to classify facial expressions into **Pain**, **Distress**, and **Normal** categories.
 
-## Features
-
-* Custom CNN architecture built from scratch
-* Facial emotion classification into 7 categories
-* Data preprocessing and augmentation
-* Model training and evaluation using PyTorch
-* Image-based emotion prediction
-* Training and validation performance analysis
-* Overfitting analysis through training and validation metrics
+The project demonstrates the complete deep learning workflow, including dataset preparation, preprocessing, CNN architecture design, model training, evaluation, and inference.
 
 ---
 
-## Emotion Classes
+# Features
 
-The model classifies images into the following categories:
+* Custom CNN architecture built entirely from scratch
+* Facial emotion recognition (7 classes)
+* Pain expression recognition (3 classes)
+* Automated dataset cleaning
+* Face detection and cropping using MediaPipe
+* Image preprocessing and augmentation
+* Training and validation dataset splitting
+* Model evaluation using confusion matrix and classification report
+* Image-based prediction scripts
+* Automatic best model checkpointing
+* Training loss and validation accuracy visualization
+
+---
+
+# Models Included
+
+## Model 1 — General Facial Emotion Recognition
+
+Classifies facial expressions into:
+
+* Angry
+* Disgust
+* Fear
+* Happy
+* Neutral
+* Sad
+* Surprise
+
+Dataset:
+
+* FER2013
+
+Output Model:
+
+```text
+models/emotion_cnn.pth
+```
+
+---
+
+## Model 2 — Pain Expression Recognition
+
+Classifies facial expressions into:
+
+* Pain
+* Distress
+* Normal
+
+Dataset:
+
+Custom dataset collected from Google Images and processed using MediaPipe face detection.
+
+Output Model:
+
+```text
+models/pain_distress_cnn.pth
+```
+
+---
+
+# Technologies Used
+
+## Programming Language
+
+* Python
+
+## Deep Learning Framework
+
+* PyTorch
+* TorchVision
+
+## Computer Vision
+
+* OpenCV
+* MediaPipe
+* Pillow (PIL)
+
+## Data Science
+
+* NumPy
+* Matplotlib
+* Scikit-learn
+
+## Development Environment
+
+* VS Code
+* Linux (ChromeOS Container)
+
+---
+
+# Datasets
+
+## FER2013 Dataset
+
+Used for general emotion recognition.
+
+| Dataset    | Images |
+| ---------- | -----: |
+| Training   | 28,821 |
+| Validation |  7,066 |
+| Total      | 35,887 |
+
+Emotion Classes:
 
 * Angry
 * Disgust
@@ -34,75 +129,95 @@ The model classifies images into the following categories:
 
 ---
 
-## Technologies Used
+## Custom Pain Dataset
 
-### Programming Language
+Created manually using Google Images.
 
-* Python
+| Class     |  Images |
+| --------- | ------: |
+| Pain      |     123 |
+| Distress  |     148 |
+| Normal    |     134 |
+| **Total** | **405** |
 
-### Libraries & Frameworks
-
-* PyTorch
-* Torchvision
-* Pillow (PIL)
-* NumPy
-
-### Development Environment
-
-* VS Code
-* Linux (ChromeOS Container)
-
----
-
-## Dataset
-
-The project uses a facial expression dataset containing images categorized into seven emotion classes.
-
-### Dataset Statistics
-
-| Dataset        | Images |
-| -------------- | ------ |
-| Training Set   | 28,821 |
-| Validation Set | 7,066  |
-| Total          | 35,887 |
-
----
-
-## Project Structure
+Dataset preparation pipeline:
 
 ```text
-facial-expression-recognition/
-│
-├── dataset/
-│   └── images/
-│       ├── train/
-│       └── validation/
-│
-├── models/
-│   └── emotion_cnn.pth
-│
-├── model.py
-├── train.py
-├── predict.py
-├── requirements.txt
-├── README.md
-│
-└── screenshots/
+Google Images
+      │
+      ▼
+Dataset Cleaning
+      │
+      ▼
+Face Detection (MediaPipe)
+      │
+      ▼
+Face Cropping
+      │
+      ▼
+Image Resizing
+      │
+      ▼
+Train / Validation Split
 ```
 
 ---
 
-## CNN Architecture
+# Project Structure
 
-The model consists of:
+```text
+facial-expression-recognition/
 
-### Feature Extraction Layers
+│
+├── dataset/
+│   └── images/
+│
+├── pain_dataset/
+│
+├── processed_dataset/
+│
+├── final_dataset/
+│
+├── models/
+│   ├── emotion_cnn.pth
+│   └── pain_distress_cnn.pth
+│
+├── reports/
+│   ├── confusion_matrix.png
+│   ├── training_loss.png
+│   └── validation_accuracy.png
+│
+├── model.py
+├── train.py
+├── predict.py
+│
+├── model_pain.py
+├── train_pain.py
+├── predict_pain.py
+├── evaluate_pain.py
+│
+├── clean_dataset.py
+├── crop_faces.py
+├── preprocess_dataset.py
+├── split_dataset.py
+│
+├── requirements.txt
+└── README.md
+```
+
+---
+
+# CNN Architecture
+
+The custom CNN consists of:
+
+### Feature Extraction
 
 * Conv2D (3 → 32)
 
 * Batch Normalization
 
-* ReLU Activation
+* ReLU
 
 * Max Pooling
 
@@ -110,7 +225,7 @@ The model consists of:
 
 * Batch Normalization
 
-* ReLU Activation
+* ReLU
 
 * Max Pooling
 
@@ -118,7 +233,7 @@ The model consists of:
 
 * Batch Normalization
 
-* ReLU Activation
+* ReLU
 
 * Max Pooling
 
@@ -126,148 +241,175 @@ The model consists of:
 
 * Batch Normalization
 
-* ReLU Activation
+* ReLU
 
 * Max Pooling
 
-### Classification Layers
+### Classification
 
+* Adaptive Average Pooling
 * Fully Connected Layer (4096 → 512)
-
-* ReLU Activation
-
+* ReLU
 * Dropout
-
 * Fully Connected Layer (512 → 256)
-
-* ReLU Activation
-
+* ReLU
 * Dropout
+* Output Layer
 
-* Output Layer (256 → 7)
+Outputs:
 
----
-
-## Training Configuration
-
-| Parameter     | Value            |
-| ------------- | ---------------- |
-| Image Size    | 64 × 64          |
-| Batch Size    | 64               |
-| Learning Rate | 0.0005           |
-| Optimizer     | Adam             |
-| Loss Function | CrossEntropyLoss |
-| Epochs        | 20               |
+* 7 neurons for Emotion Recognition
+* 3 neurons for Pain Recognition
 
 ---
 
-## Data Augmentation
+# Data Augmentation
 
-To improve generalization, the following transformations were applied:
+The following augmentation techniques are applied during training:
 
 * Resize (64 × 64)
 * Random Horizontal Flip
 * Random Rotation (10°)
+* Random Affine Transformation
+* Brightness Adjustment
+* Contrast Adjustment
 * Tensor Conversion
 
 ---
 
-## Results
+# Training Configuration
 
-### Experiment 1
+| Parameter      |                                Value |
+| -------------- | -----------------------------------: |
+| Framework      |                              PyTorch |
+| Image Size     |                              64 × 64 |
+| Batch Size     | 32 (Pain Model) / 64 (Emotion Model) |
+| Optimizer      |                                 Adam |
+| Learning Rate  |                               0.0005 |
+| Loss Function  |                     CrossEntropyLoss |
+| Scheduler      |                    ReduceLROnPlateau |
+| Early Stopping |                              Enabled |
 
-Custom CNN with Batch Normalization and Data Augmentation.
+---
 
-| Metric                   | Value  |
-| ------------------------ | ------ |
+# Results
+
+## General Emotion Recognition
+
+| Metric                   |  Value |
+| ------------------------ | -----: |
+| Training Accuracy        | 95.58% |
 | Best Validation Accuracy | 61.66% |
 
-### Experiment 2
-
-Extended training and optimization to analyze model learning behavior.
-
-| Metric                    | Value  |
-| ------------------------- | ------ |
-| Training Accuracy         | 95.58% |
-| Best Validation Accuracy  | 60.76% |
-| Final Validation Accuracy | 59.93% |
-| Training Loss             | 0.1264 |
+The experiment demonstrates successful learning but also highlights overfitting, emphasizing the importance of regularization and evaluation.
 
 ---
 
-## Performance Analysis
+## Pain Expression Recognition
 
-The model achieved a training accuracy of 95.58%, demonstrating its ability to learn and fit the training dataset effectively.
+| Metric                            |       Value |
+| --------------------------------- | ----------: |
+| Best Validation Accuracy Achieved | **80.00%*** |
 
-However, validation accuracy remained around 60%, indicating overfitting. This experiment highlights the difference between memorization and generalization in deep learning systems and demonstrates the importance of model regularization and performance evaluation on unseen data.
+* Accuracy may vary slightly between training runs because of random initialization and data augmentation.
+
+Evaluation includes:
+
+* Confusion Matrix
+* Classification Report
+* Precision
+* Recall
+* F1-Score
+* Training Loss Graph
+* Validation Accuracy Graph
 
 ---
 
-## Running the Project
+# Running the Project
 
-### Install Dependencies
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Train the Model
+---
+
+## Train Emotion Recognition Model
 
 ```bash
 python train.py
 ```
 
-### Predict Emotion for an Image
+---
+
+## Train Pain Recognition Model
 
 ```bash
-python predict.py path/to/image.jpg
-```
-
-Example:
-
-```bash
-python predict.py dataset/images/validation/happy/10019.jpg
-```
-
-Output:
-
-```text
-Predicted Emotion: happy
+python train_pain.py
 ```
 
 ---
 
-## Learning Outcomes
+## Evaluate Pain Recognition Model
 
-Through this project, the following concepts were explored:
+```bash
+python evaluate_pain.py
+```
+
+---
+
+## Predict Emotion
+
+```bash
+python predict.py image.jpg
+```
+
+---
+
+## Predict Pain Expression
+
+```bash
+python predict_pain.py "image.jpg"
+```
+
+---
+
+# Learning Outcomes
+
+This project explores the following deep learning concepts:
 
 * Convolutional Neural Networks (CNNs)
 * Image Classification
+* Facial Expression Recognition
 * Data Augmentation
+* Face Detection using MediaPipe
 * Batch Normalization
-* Model Training and Evaluation
+* Dropout Regularization
+* Learning Rate Scheduling
+* Early Stopping
 * Hyperparameter Tuning
-* Overfitting Analysis
+* Confusion Matrix Analysis
+* Precision, Recall, and F1-Score
 * Deep Learning using PyTorch
 
 ---
 
-## Future Improvements
+# Future Improvements
 
 Potential enhancements include:
 
-* Early Stopping
-* Learning Rate Scheduling
-* Confusion Matrix Analysis
-* Real-Time Webcam Emotion Detection
-* Attention-Based CNN Architectures
-* Transfer Learning using ResNet or EfficientNet
-* Deployment using Flask or Streamlit
+* Larger and more diverse custom pain dataset
+* Transfer Learning (ResNet, EfficientNet, MobileNet)
+* Attention-based CNN architectures
+* Real-time webcam inference
+* Web deployment using Flask or Streamlit
+* Mobile deployment using TensorFlow Lite or ONNX
 
 ---
 
-## Author
+# Author
 
 **Anubhab Chakraborty**
 
-Built as a deep learning project to explore facial expression recognition and CNN-based image classification using PyTorch.
+This project was developed as part of deep learning research in facial expression recognition using PyTorch. It demonstrates both traditional facial emotion recognition and custom pain/distress recognition through end-to-end CNN development, dataset preparation, training, evaluation, and inference.

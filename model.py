@@ -68,13 +68,13 @@ class EmotionCNN(nn.Module):
             nn.Flatten(),
 
             nn.Linear(
-                256 * 6 * 6,
+                256 * 4 * 4,
                 512
             ),
 
             nn.ReLU(),
 
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
 
             nn.Linear(
                 512,
@@ -87,7 +87,7 @@ class EmotionCNN(nn.Module):
 
             nn.Linear(
                 256,
-                7
+                3
             )
         )
 

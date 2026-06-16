@@ -33,7 +33,7 @@ model.eval()
 
 
 transform = transforms.Compose([
-    transforms.Resize((96, 96)),
+    transforms.Resize((64, 64)),
     transforms.ToTensor()
 ])
 
